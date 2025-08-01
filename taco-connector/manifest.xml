@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<connector-plugin class="DynamicReportConnector" superclass="" version="1.0" name="Dynamic Report Connector" plugin-version="1.0.0">
+  <connection-fields>
+    <field name="workspace" datatype="string" default="" label="Workspace" required="true">
+      <description>Select the workspace to fetch reports from</description>
+      <validation-list>
+        <value>HSVRR</value>
+        <value>FRTB</value>
+        <value>SANDBOX</value>
+      </validation-list>
+    </field>
+    <field name="report" datatype="string" default="" label="Report" required="true">
+      <description>Select the report to fetch data from</description>
+      <validation-list>
+        <value>HSVAR</value>
+        <value>HS_PORTFOLIO_PnL</value>
+        <value>SENSITIVITIES</value>
+      </validation-list>
+    </field>
+    <field name="cobdate" datatype="date" default="" label="COB Date" required="true">
+      <description>Select the close of business date for the report</description>
+    </field>
+    <field name="snaptype" datatype="string" default="" label="Snap Type" required="true">
+      <description>Enter the snap type for the report</description>
+    </field>
+    <field name="riskclass" datatype="string" default="" label="Risk Class" required="true">
+      <description>Enter the risk class for the report</description>
+    </field>
+  </connection-fields>
+  
+  <connection-normalizer>
+    <required-attributes>
+      <attribute-list>
+        <attr>workspace</attr>
+        <attr>report</attr>
+        <attr>cobdate</attr>
+        <attr>snaptype</attr>
+        <attr>riskclass</attr>
+      </attribute-list>
+    </required-attributes>
+  </connection-normalizer>
+  
+  <driver-install>
+    <drivers>
+      <driver name="DynamicReportDriver" />
+    </drivers>
+  </driver-install>
+  
+  <connection-resolver>
+    <connection-builder>
+      <script>
+        // Dynamic connection builder script
+        function buildConnection(connectionBuilder, fields) {
+          // Set connection properties
+          connectionBuilder.setConnectionName(fields.report + " - " + fields.workspace + " - " + fields.cobdate);
+          
+          // Add connection properties
+          connectionBuilder.addConnectionProperty("workspace", fields.workspace);
+          connectionBuilder.addConnectionProperty("report", fields.report);
+          connectionBuilder.addConnectionProperty("cobdate", fields.cobdate);
+          connectionBuilder.addConnectionProperty("snaptype", fields.snaptype);
+          connectionBuilder.addConnectionProperty("riskclass", fields.riskclass);
+          
+          // Set connection type
+          connectionBuilder.setConnectionType("web");
+          
+          return connectionBuilder.build();
+        }
+      </script>
+    </connection-builder>
+  </connection-resolver>
+  
+  <connection-metadata>
+    <libraries>
+      <library name="DynamicReportLibrary" />
+    </libraries>
+  </connection-metadata>
+</connector-plugin> 

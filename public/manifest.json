@@ -1,0 +1,47 @@
+{
+  "manifest_version": 1,
+  "version": "1.0.0",
+  "name": "Dynamic Report Connector",
+  "description": "A dynamic web data connector for fetching reports with configurable parameters",
+  "author": "Your Organization",
+  "author_email": "your-email@organization.com",
+  "company": "Your Organization",
+  "support_email": "support@organization.com",
+  "website": "https://your-organization.com",
+  "min_connector_version": "3.0.0",
+  "protocol_version": "3.0.0",
+  "oauth_config": {
+    "client_id": "",
+    "client_secret": "",
+    "auth_uri": "",
+    "token_uri": "",
+    "redirect_uri": ""
+  },
+  "connection_fields": [
+    {
+      "id": "workspace",
+      "label": "Workspace",
+      "type": "select",
+      "required": true,
+      "help": "Select the workspace to fetch reports from"
+    },
+    {
+      "id": "report",
+      "label": "Report",
+      "type": "select",
+      "required": true,
+      "help": "Select the report to fetch data from"
+    },
+    {
+      "id": "cobdate",
+      "label": "COB Date",
+      "type": "date",
+      "required": true,
+      "help": "Select the close of business date for the report"
+    }
+  ],
+  "connection_metadata": {
+    "connector_semantic_version": "1.0.0",
+    "connector_flavor": "dynamic"
+  }
+} 

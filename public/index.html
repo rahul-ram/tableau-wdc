@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Dynamic Report Connector - Tableau WDC</title>
+    <meta name="description" content="A dynamic web data connector for Tableau that enables users to fetch reports with configurable parameters" />
+    
+    <!-- Tableau WDC Script -->
+    <script src="https://connectors.tableau.com/libs/tableauwdc-3.0.latest.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://connectors.tableau.com" />
+    
+    <style>
+      /* Loading spinner for initial load */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+      }
+      
+      .loading-spinner::after {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Hide loading spinner when app is ready */
+      .app-ready .loading-spinner {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading-spinner"></div>
+    <div id="root"></div>
+    
+    <script>
+      // Hide loading spinner when React app is ready
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          document.body.classList.add('app-ready');
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
