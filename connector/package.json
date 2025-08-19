@@ -1,0 +1,38 @@
+{
+  "name": "tableau-wdc-dynamic",
+  "description": "Dynamic Report connector with TypeScript and HTML",
+  "author": "Dynamic Reports Inc",
+  "version": "1.0.0",
+  "devDependencies": {
+    "typescript": "^5.2.0"
+  },
+  "dependencies": {},
+  "scripts": {
+    "build": "node ../scripts/build.js",
+    "clean": "node ../scripts/clean.js",
+    "start": "node ../scripts/dev.js"
+  },
+  "targets": {
+    "handlers": {
+      "includeNodeModules": false,
+      "sourceMap": false,
+      "context": "web-worker",
+      "distDir": "../dist/handlers",
+      "outputFormat": "commonjs",
+      "isLibrary": false,
+      "optimize": false
+    },
+    "app": {
+      "publicUrl": "./",
+      "distDir": "../dist/app",
+      "engines": {
+        "browsers": "Chrome 70"
+      }
+    }
+  },
+  "alias": {
+    "process": false,
+    "path": false,
+    "util": false
+  }
+}

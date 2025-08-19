@@ -4,7 +4,7 @@ const archiver = require('archiver');
 
 const projectRoot = path.join(__dirname, '..');
 const distPath = path.join(projectRoot, 'dist');
-const outputPath = path.join(projectRoot, 'tableau-wdc-dynamic.taco');
+const outputPath = path.join(projectRoot, 'tableau-wdc-dynamic-v2.taco');
 
 async function packageWDC() {
   console.log('📦 Creating WDC package...');
@@ -62,8 +62,8 @@ async function packageWDC() {
 
     archive.pipe(output);
 
-    // Add dist contents to root of archive
-    archive.directory(distPath, false);
+    // Add dist contents maintaining the dist/ structure
+    archive.directory(distPath, 'dist');
     
     // Add XML configuration files to root
     const xmlFiles = ['manifest.xml', 'connection-fields.xml', 'connection-metadata.xml'];
@@ -73,6 +73,12 @@ async function packageWDC() {
         archive.file(filePath, { name: fileName });
       }
     });
+    
+    // Add connector source directory
+    const connectorSrcPath = path.join(projectRoot, 'connector');
+    if (fs.existsSync(connectorSrcPath)) {
+      archive.directory(connectorSrcPath, 'connector');
+    }
     
     // Add META-INF directory
     const metaInfPath = path.join(projectRoot, 'META-INF');
@@ -85,7 +91,7 @@ async function packageWDC() {
     const files = getAllFiles(distPath);
     files.forEach(file => {
       const relativePath = path.relative(distPath, file);
-      console.log(`  ✓ ${relativePath}`);
+      console.log(`  ✓ dist/${relativePath}`);
     });
     
     // Show XML files
@@ -95,6 +101,12 @@ async function packageWDC() {
         console.log(`  ✓ ${fileName}`);
       }
     });
+    
+    // Show connector source
+    if (fs.existsSync(connectorSrcPath)) {
+      console.log(`  ✓ connector/connector.json`);
+      console.log(`  ✓ connector/package.json`);
+    }
     
     if (fs.existsSync(metaInfPath)) {
       console.log(`  ✓ META-INF/MANIFEST.MF`);

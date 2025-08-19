@@ -39,6 +39,12 @@ if (fs.existsSync(path.join(appDir, 'index.css'))) {
   fs.copyFileSync(path.join(appDir, 'index.css'), path.join(distDir, 'app', 'index.css'));
 }
 
+// Copy package.json to app directory for proper connector detection
+const packageJsonPath = path.join(projectRoot, 'package.json');
+if (fs.existsSync(packageJsonPath)) {
+  fs.copyFileSync(packageJsonPath, path.join(distDir, 'app', 'package.json'));
+}
+
 // Compile TypeScript for handlers (if any exist)
 if (fs.existsSync(handlersDir) && fs.readdirSync(handlersDir).length > 0) {
   console.log('🔧 Compiling handlers TypeScript...');
