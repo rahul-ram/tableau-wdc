@@ -1,42 +1,46 @@
 {
   "name": "tableau-wdc-dynamic",
+  "description": "Dynamic Report WDC with TypeScript and custom build scripts",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack --mode production",
-    "build:wdc": "npm run build && npm run package",
-    "package": "taco build --manifest manifest.json",
-    "dev": "webpack serve --mode development --open",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "taco:init": "taco init",
-    "taco:build": "taco build",
-    "taco:package": "taco package",
-    "taco:simulate": "taco simulate"
+    "build": "node scripts/build.js",
+    "clean": "node scripts/clean.js",
+    "dev": "node scripts/dev.js",
+    "test": "node scripts/test.js",
+    "package": "node scripts/package.js",
+    "sign": "node scripts/sign.js",
+    "build:wdc": "npm run clean && npm run build && npm run package"
   },
-  "dependencies": {
-    "archiver": "^7.0.1",
-    "axios": "^1.6.0",
-    "date-fns": "^2.30.0",
-    "react": "^18.2.0",
-    "react-datepicker": "^4.25.0",
-    "react-dom": "^18.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@tableau/taco-toolkit": "^1.0.0",
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-datepicker": "^4.19.0",
-    "@types/react-dom": "^18.2.0",
-    "copy-webpack-plugin": "^11.0.0",
-    "css-loader": "^6.8.0",
-    "dotenv-webpack": "^8.0.1",
-    "html-webpack-plugin": "^5.5.0",
-    "style-loader": "^3.3.0",
-    "ts-loader": "^9.5.0",
     "typescript": "^5.2.0",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.0",
-    "webpack-dev-server": "^4.15.0"
+    "archiver": "^7.0.1",
+    "chokidar": "^3.5.3",
+    "http-server": "^14.1.1",
+    "jsdom": "^24.0.0"
+  },
+  "targets": {
+    "handlers": {
+      "includeNodeModules": false,
+      "sourceMap": false,
+      "context": "web-worker",
+      "distDir": "dist/handlers",
+      "outputFormat": "commonjs",
+      "isLibrary": false,
+      "optimize": true
+    },
+    "app": {
+      "publicUrl": "./",
+      "distDir": "dist/app",
+      "engines": {
+        "browsers": "Chrome 70"
+      }
+    }
+  },
+  "alias": {
+    "process": false,
+    "path": false,
+    "util": false
   }
 }

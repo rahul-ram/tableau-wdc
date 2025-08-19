@@ -1,19 +1,19 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { 
-  Workspace, 
-  ReportName, 
-  ReportAttribute, 
-  ApiResponse, 
-  WorkspaceResponse, 
-  ReportResponse, 
+import {
+  Workspace,
+  ReportName,
+  ReportAttribute,
+  ApiResponse,
+  WorkspaceResponse,
+  ReportResponse,
   ReportAttributesResponse,
-  ApiError 
+  ApiError
 } from '../types';
-import config, { getApiUrl, getAuthHeaders, isDevelopment } from '../config';
+import config, { getAuthHeaders, isDevelopment } from '../config';
 
 // Create axios instance with configuration
 const apiClient = axios.create({
-  baseURL: config.api.baseUrl,
+  baseURL: isDevelopment ? 'http://localhost:4173' : config.api.baseUrl,
   timeout: config.api.timeout,
   headers: getAuthHeaders(),
 });
@@ -63,7 +63,7 @@ export const getWorkspaces = async (): Promise<Workspace[]> => {
     const response: AxiosResponse<ApiResponse<WorkspaceResponse>> = await apiClient.get(
       config.api.endpoints.workspaces
     );
-    
+
     return response.data.data.workspaces;
   } catch (error) {
     console.error('Error fetching workspaces:', error);
@@ -83,7 +83,7 @@ export const getReports = async (workspace: Workspace): Promise<ReportName[]> =>
     const response: AxiosResponse<ApiResponse<ReportResponse>> = await apiClient.get(
       `${config.api.endpoints.reports}?workspace=${workspace}`
     );
-    
+
     return response.data.data.reports;
   } catch (error) {
     console.error('Error fetching reports:', error);
@@ -103,7 +103,7 @@ export const getReportAttributes = async (report: ReportName): Promise<ReportAtt
     const response: AxiosResponse<ApiResponse<ReportAttributesResponse>> = await apiClient.get(
       `${config.api.endpoints.attributes}?reportName=${report}`
     );
-    
+
     return response.data.data.attributes;
   } catch (error) {
     console.error('Error fetching report attributes:', error);
@@ -118,6 +118,8 @@ export const fetchReportData = async (params: {
   report: ReportName;
   cobdate: string;
   attributes: Record<string, string>;
+  userEmail?: string;
+  signature?: string;
 }): Promise<any[]> => {
   try {
     if (isDevelopment) {
@@ -147,8 +149,18 @@ export const fetchReportData = async (params: {
       ];
     }
 
-    const response = await apiClient.post('/fetch/report-data', params);
-    return response.data.data;
+    const qp = new URLSearchParams();
+    qp.set('user_email', params.userEmail || 'dev.user@example.com');
+    qp.set('workspace_name', params.workspace);
+    qp.set('report_name', params.report);
+    // Merge attributes and cobdate into backend expected params
+    const paramPayload: Record<string, any> = { ...params.attributes };
+    if (params.cobdate) paramPayload.cobdate = params.cobdate;
+    qp.set('parameters', JSON.stringify(paramPayload));
+    if (params.signature) qp.set('signature', params.signature);
+
+    const response = await apiClient.get(`/reports/getData?${qp.toString()}`);
+    return response.data.data || response.data;
   } catch (error) {
     console.error('Error fetching report data:', error);
     throw error;

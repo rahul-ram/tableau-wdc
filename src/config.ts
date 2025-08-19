@@ -1,18 +1,25 @@
 import { WdcConfig, ApiConfig, AuthConfig } from './types';
 
-// Load environment variables
+// Load environment variables for both Vite and Node
 const getEnvVar = (key: string, defaultValue: string = ''): string => {
-  return process.env[key] || defaultValue;
+  const viteEnv: any = (import.meta as any)?.env || {};
+  const vitePrefixed = viteEnv[`VITE_${key}`];
+  const vitePlain = viteEnv[key];
+  if (typeof vitePrefixed !== 'undefined') return String(vitePrefixed);
+  if (typeof vitePlain !== 'undefined') return String(vitePlain);
+  const nodeEnv: any = (typeof process !== 'undefined' && (process as any).env) ? (process as any).env : {};
+  if (typeof nodeEnv[key] !== 'undefined') return String(nodeEnv[key]);
+  return defaultValue;
 };
 
 // API Configuration
 const apiConfig: ApiConfig = {
-  baseUrl: getEnvVar('API_BASE_URL', 'http://localhost:3000/api'),
+  baseUrl: getEnvVar('API_BASE_URL', 'http://localhost:4173'),
   timeout: parseInt(getEnvVar('API_TIMEOUT', '30000')),
   endpoints: {
-    workspaces: getEnvVar('MOCK_WORKSPACES_API', '/api/get/workspaces'),
-    reports: getEnvVar('MOCK_REPORTS_API', '/api/get/reports'),
-    attributes: getEnvVar('MOCK_ATTRIBUTES_API', '/api/get/reportAttributes'),
+    workspaces: getEnvVar('MOCK_WORKSPACES_API', '/reports/workspaces'),
+    reports: getEnvVar('MOCK_REPORTS_API', '/reports/getReports'),
+    attributes: getEnvVar('MOCK_ATTRIBUTES_API', '/reports/getReportParams'),
   }
 };
 
@@ -43,8 +50,8 @@ export const config: WdcConfig = {
 };
 
 // Environment-specific configurations
-export const isDevelopment = process.env.NODE_ENV === 'development';
-export const isProduction = process.env.NODE_ENV === 'production';
+export const isDevelopment = ((import.meta as any)?.env?.DEV) || getEnvVar('NODE_ENV') === 'development';
+export const isProduction = ((import.meta as any)?.env?.PROD) || getEnvVar('NODE_ENV') === 'production';
 
 // Helper functions
 export const getApiUrl = (endpoint: string): string => {
